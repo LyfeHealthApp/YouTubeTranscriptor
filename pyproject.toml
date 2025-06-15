@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "youtubetranscriptor"
+version = "0.1.0"
+description = "A tool to extract transcripts from YouTube videos"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.13,<3.14"
+pandas = "^2.3.0"
+youtube-transcript-api = "^1.1.0"
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
