@@ -55,7 +55,7 @@ class YouTubeTranscriptor:
             video_id (str): YouTube video ID.
 
         Returns:
-            str: Full transcript text.
+            str: Clean transcript text without any metadata.
 
         Raises:
             TranscriptError: If transcript cannot be retrieved or processed.
@@ -79,13 +79,27 @@ class YouTubeTranscriptor:
             
             transcript_data = transcript.fetch()
             
-            # Handle different transcript formats
+            # Extract only the text content from transcript data
             if isinstance(transcript_data, list):
-                return " ".join(str(item.get('text', '')) for item in transcript_data)
-            elif hasattr(transcript_data, 'text'):
-                return str(transcript_data.text)
+                # Handle list of transcript segments
+                texts = []
+                for item in transcript_data:
+                    if isinstance(item, dict):
+                        text = item.get('text', '').strip()
+                        if text:
+                            texts.append(text)
+                return ' '.join(texts)
             else:
-                return " ".join(str(item) for item in transcript_data)
+                # Handle string representation of transcript data
+                transcript_str = str(transcript_data)
+                texts = []
+                # Extract all text content between text=" or text=' quotes
+                text_matches = re.finditer(r'text=[\'"](.*?)[\'"]', transcript_str)
+                for match in text_matches:
+                    text = match.group(1).strip()
+                    if text:
+                        texts.append(text)
+                return ' '.join(texts)
 
         except (TranscriptsDisabled, NoTranscriptFound) as e:
             raise TranscriptError(f"Could not retrieve transcript: {str(e)}")
